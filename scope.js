@@ -12,7 +12,7 @@ Scope.prototype.$watch = function (watchFn, listenerFn) {
     this.$$watchers.push(watcher);
 };
 
-Scope.prototype.$digest = function () {
+Scope.prototype.$$digestOnce = function () {
     var self = this;
     _.forEach(this.$$watchers, function(watch) {
         var newValue = watch.watchFn(self);
