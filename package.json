@@ -10,5 +10,9 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.10.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ricardoerikson/diy-angular.git"
   }
 }
