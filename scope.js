@@ -27,4 +27,11 @@ Scope.prototype.$$digestOnce = function () {
     return dirty;
 };
 
+Scope.prototype.$digest = function() {
+    var dirty;
+    do {
+        dirty = this.$$digestOnce();
+    } while (dirty);
+};
+
 module.exports = Scope;
