@@ -1,13 +1,14 @@
 var _ = require('lodash');
 
 var Scope = function() {
-    this.$$watchers = [];
+	this.$$watchers = [];
 }
 
-Scope.prototype.$watch = function (watchFn, listenerFn) {
+Scope.prototype.$watch = function (watchFn, listenerFn, valueEq) {
     var watcher = {
         watchFn: watchFn,
-        listenerFn: listenerFn || function() {}
+        listenerFn: listenerFn || function() {},
+        valueEq: !!valueEq
     };
     this.$$watchers.push(watcher);
 };
@@ -18,10 +19,10 @@ Scope.prototype.$$digestOnce = function () {
     _.forEach(this.$$watchers, function(watch) {
         var newValue = watch.watchFn(self);
         var oldValue = watch.last;
-        if (newValue !== oldValue) {
+        if (!self.$$areEquals(newValue, oldValue, watch.valueEq)) {
             watch.listenerFn(newValue, oldValue, self);
             dirty = true;
-            watch.last = newValue;
+            watch.last = (watch.valueEq ? _.cloneDeep(newValue) : newValue);
         }
     });
     return dirty;
@@ -36,6 +37,14 @@ Scope.prototype.$digest = function() {
             throw "10 digest iterations reached";
         }
     } while (dirty);
+};
+
+Scope.prototype.$$areEquals = function (newValue, oldValue, valueEq) {
+    if (valueEq) {
+        return _.isEqual(newValue, oldValue);
+    } else {
+        return newValue === oldValue;
+    }
 };
 
 module.exports = Scope;
